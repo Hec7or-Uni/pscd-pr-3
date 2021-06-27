@@ -1,0 +1,62 @@
+#*****************************************************************
+# File:   Makefile
+# Author: Ignacio Ortega(610720) & Hector Toral(798095)
+# Date:   octubre 2020
+# Coms:   Ejecutar "make" para compilar (o "make -f Makefile")
+#         Ejecutar "make clean" para limpiar (borrar lo que genere)
+#*****************************************************************
+
+#---------------------------------------------------------
+# macros
+RM = /bin/rm -f  # para limpiar
+CC = g++         # compilador
+#---------------------------------------------------------
+# opciones compilación y enlazado ("linkado")
+CPPFLAGS = -I. -I${LOG_LIB} -I${SEM_LIB} -O2 -std=c++11 -fmax-errors=1 -D LOGGING_MODE # opciones compilación
+LDFLAGS  = -pthread  # opciones de "linkado"
+#---------------------------------------------------------
+# vars
+EJEC_1 = practica_3_V1
+EJEC_2 = practica_3_V2
+#---------------------------------------------------------
+# directorio y clase para semáforos
+SEM_LIB=librerias/Semaphore_V4
+SEMAPHORE=${SEM_LIB}/Semaphore_V4
+#---------------------------------------------------------
+#directorio y clase para manejo de logs de Semaphore_V4
+LOG_LIB=../Logger_V3
+LOGGER=${LOG_LIB}/Logger
+#---------------------------------------------------------
+#directorio y clase para manejo de logs de practica_3
+LOG_LIB= librerias/Logger_V3
+LOGGER=${LOG_LIB}/Logger
+
+
+all: ${EJEC_1} ${EJEC_2}
+#---------------------------------------------------------
+# "linkar"
+${EJEC_1}: ${EJEC_1}.o ${SEMAPHORE}.o ${LOGGER}.o
+	${CC} ${EJEC_1}.o ${SEMAPHORE}.o ${LOGGER}.o -o ${EJEC_1} ${CPPFLAGS} ${LDFLAGS}
+
+${EJEC_2}: ${EJEC_2}.o ${SEMAPHORE}.o ${LOGGER}.o
+	${CC} ${EJEC_2}.o ${SEMAPHORE}.o ${LOGGER}.o -o ${EJEC_2} ${CPPFLAGS} ${LDFLAGS}
+
+#---------------------------------------------------------
+# compilar
+${EJEC_1}.o: ${EJEC_1}.cpp 
+	${CC} -c ${EJEC_1}.cpp ${CPPFLAGS}
+
+${EJEC_2}.o: ${EJEC_2}.cpp 
+	${CC} -c ${EJEC_2}.cpp ${CPPFLAGS}
+
+${SEMAPHORE}.o: ${SEMAPHORE}.hpp ${SEMAPHORE}.cpp
+	${CC} -c ${SEMAPHORE}.cpp -o ${SEMAPHORE}.o ${CPPFLAGS}
+
+${LOGGER}.o: ${LOGGER}.hpp ${LOGGER}.cpp
+	${CC} -c ${LOGGER}.cpp -o ${LOGGER}.o ${CPPFLAGS}
+
+#---------------------------------------------------------
+# Cuidado con lo que se pone aquí, que se borra sin preguntar
+clean:
+	$(RM) ${LOGGER}.o ${SEMAPHORE}.o ${EJEC_1}.o ${EJEC_1} ${EJEC_2}.o ${EJEC_2}
+	$(RM) _log_.log
